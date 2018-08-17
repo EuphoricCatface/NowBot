@@ -24,7 +24,7 @@ class NowBot(basebot.Bot):
 
     def handle_command(self, cmdline, meta):
         if cmdline[0] == '!now':
-            now_handler(cmdline, meta)
+            now_handler(self, cmdline, meta)
         basebot.Bot.handle_command(self, cmdline, meta)
 
 def main():
