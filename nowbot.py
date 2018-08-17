@@ -8,16 +8,46 @@
 import os
 import basebot
 import pytz
+import datetime
 
 def timezone_handler(self, cmdline, meta):
-    if cmdline[1] == '--timezone':
-        pass # dummy!
+    timefmt = '%Y-%m-%d %H:%M, %z'
+
+    if len(cmdline) != 3:
+        return 
+
+    tzstr = cmdline[2]
+    if tzstr == 'help':
+        meta['reply']('Usage: !now --timezone <timezone>\n'+\
+                'Find the timezone you want to know from the Wikipedia page\n' +\
+                'https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\n' +\
+                'find TZ value and put it into <timezone>\n\n' +\
+                'For your convenience, UTC+/-offset type queries are also provided')
+        return
+
+    if tzstr[0:3] == 'UTC':
+        offset = tzstr[3:]
+        if offset == '':
+            tzstr = 'Etc/GMT'
+        else:
+            offsetInt = -int(offset)
+            offset = '{0:+d}'.format(offsetInt)
+            tzstr = 'Etc/GMT' + offset
+
+    try:
+        timezone = pytz.timezone(tzstr)
+    except pytz.exceptions.UnknownTimeZoneError:
+        meta['reply']('Unknown timezone. For more info, type "!now --timezone help"')
+        return
+
+    meta['reply'](datetime.datetime.now().astimezone(timezone).strftime(timefmt))
 
 class NowBot(basebot.Bot):
     BOTNAME = 'NowBot'
     NICKNAME = 'LilNowBot'
     SHORT_HELP = 'Someday, I will grow up to be @NowBot, with even more commands!'
-    LONG_HELP = 'I show xkcd.com/now on the command "!now"\n'+\
+    LONG_HELP = '!now -> show xkcd.com/now\n'+\
+                '!now --timezone <timezone> -> show localtime for a timezone.\n' +\
                 'Someday, I will grow up to be @NowBot, with even more commands!'
 
     def __init__(self, *args, **kwds):
@@ -29,7 +59,7 @@ class NowBot(basebot.Bot):
             if len(cmdline) == 1:
                 meta['reply']('imgs.xkcd.com/comics/now.png')
 
-            else if cmdline[1] == '--timezone'
+            elif cmdline[1] == '--timezone':
                 timezone_handler(self, cmdline, meta)
 
         basebot.Bot.handle_command(self, cmdline, meta)
