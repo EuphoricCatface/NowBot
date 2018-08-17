@@ -7,10 +7,11 @@
 # Obligatory import.
 import os
 import basebot
+import pytz
 
-def now_handler(self, cmdline, meta):
-    if len(cmdline) == 1:
-        meta['reply']('imgs.xkcd.com/comics/now.png')
+def timezone_handler(self, cmdline, meta):
+    if cmdline[1] == '--timezone':
+        pass # dummy!
 
 class NowBot(basebot.Bot):
     BOTNAME = 'NowBot'
@@ -23,8 +24,14 @@ class NowBot(basebot.Bot):
         basebot.Bot.__init__(self, *args, **kwds)
 
     def handle_command(self, cmdline, meta):
+
         if cmdline[0] == '!now':
-            now_handler(self, cmdline, meta)
+            if len(cmdline) == 1:
+                meta['reply']('imgs.xkcd.com/comics/now.png')
+
+            else if cmdline[1] == '--timezone'
+                timezone_handler(self, cmdline, meta)
+
         basebot.Bot.handle_command(self, cmdline, meta)
 
 def main():
