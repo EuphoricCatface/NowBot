@@ -17,7 +17,7 @@ class NowBot(basebot.Bot):
     NICKNAME = 'LilNowBot'
     SHORT_HELP = 'Someday, I will grow up to be @NowBot, with even more commands!'
     LONG_HELP = 'I show xkcd.com/now on the command "!now"\n'+\
-                'Someday, I will grow up to be @NotBot, with even more commands!'
+                'Someday, I will grow up to be @NowBot, with even more commands!'
 
     def __init__(self, *args, **kwds):
         basebot.Bot.__init__(self, *args, **kwds)
