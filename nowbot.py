@@ -33,7 +33,7 @@ def timezone_handler(self, cmdline, meta):
                 'For your convenience, UTC+/-<offset> type queries are also provided')
         return
 
-    if tzstr[0:3] == 'UTC':
+    if tzstr[0:3].lower() == 'utc':
         offset = tzstr[3:]
         if offset == '':
             tzstr = 'Etc/GMT'
@@ -42,6 +42,7 @@ def timezone_handler(self, cmdline, meta):
                 offsetInt = -int(offset)
             except ValueError:
                 meta['reply']('Wrong offset for UTC. Use UTC+/-<offset> (where offset is integer)')
+                return
             offset = '{0:+d}'.format(offsetInt)
             tzstr = 'Etc/GMT' + offset
 
@@ -72,6 +73,9 @@ class NowBot(basebot.Bot):
 
             elif cmdline[1] == '--timezone':
                 timezone_handler(self, cmdline, meta)
+
+            else:
+                meta['reply']('Type !help @NowBot for help')
 
         basebot.Bot.handle_command(self, cmdline, meta)
 
