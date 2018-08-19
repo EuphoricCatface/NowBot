@@ -13,7 +13,15 @@ import datetime
 def timezone_handler(self, cmdline, meta):
     timefmt = '%Y-%m-%d %H:%M, %z'
 
-    if len(cmdline) != 3:
+    if len(cmdline) == 2:
+        meta ['reply']('Usage: !now --timezone <timezone>\n' +\
+                'For more info, type "!now --timezone help"')
+        return 
+    
+    if len(cmdline) > 3:
+        meta ['reply']('Usage: !now --timezone <timezone>\n' +\
+                'only one timezone is allowed. Timezones don\'t include space.\n' +\
+                'For more info, type "!now --timezone help"')
         return 
 
     tzstr = cmdline[2]
