@@ -20,7 +20,7 @@ def timezone_handler(self, cmdline, meta):
     
     if len(cmdline) > 3:
         meta ['reply']('Usage: !now --timezone <timezone>\n' +\
-                'only one timezone is allowed. Timezones don\'t include space.\n' +\
+                'Only one timezone is allowed. Timezones don\'t include space.\n' +\
                 'For more info, type "!now --timezone help"')
         return 
 
@@ -30,7 +30,7 @@ def timezone_handler(self, cmdline, meta):
                 'Find the timezone you want to know from the Wikipedia page\n' +\
                 'https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\n' +\
                 'find TZ value and put it into <timezone>\n\n' +\
-                'For your convenience, UTC+/-offset type queries are also provided')
+                'For your convenience, UTC+/-<offset> type queries are also provided')
         return
 
     if tzstr[0:3] == 'UTC':
@@ -38,7 +38,10 @@ def timezone_handler(self, cmdline, meta):
         if offset == '':
             tzstr = 'Etc/GMT'
         else:
-            offsetInt = -int(offset)
+            try:
+                offsetInt = -int(offset)
+            except ValueError:
+                meta['reply']('Wrong offset for UTC. Use UTC+/-<offset> (where offset is integer)')
             offset = '{0:+d}'.format(offsetInt)
             tzstr = 'Etc/GMT' + offset
 
