@@ -10,6 +10,28 @@ import basebot
 import pytz
 import datetime
 
+userdata = {
+        'dummy_id':{'nick':'ㅇㅈㅇ','timezone':{'Asia/Seoul'}}
+        }
+
+def userdata_add(self, cmdline, meta):
+    meta['reply']('Note: Adding a user to NowBot is still not fully implemented yet')
+    if len(cmdline) != 3:
+        return
+    if not meta['msg'].sender.is_account:
+        meta['reply']('You appear to be not logged in.\n'+\
+                'NowBot basically associates your timezone to your euphoria account.\n'+\
+                'Please log in, or contact @Catface to get yourself added to NowBot.')
+        return
+    
+    user=dict()
+    user['nick'] = meta['msg'].sender.name
+    user['timezone'] = {str(cmdline[2])}
+     
+    userdata[meta['msg'].sender.id] = user
+    print(userdata)
+
+
 def timezone_handler(self, cmdline, meta):
     timefmt = '%Y-%m-%d %H:%M, %z'
 
@@ -73,6 +95,9 @@ class NowBot(basebot.Bot):
 
             elif cmdline[1] == '--timezone':
                 timezone_handler(self, cmdline, meta)
+
+            elif cmdline[1] == '--add':
+                userdata_add(self, cmdline, meta)
 
             else:
                 meta['reply']('Type !help @NowBot for help')
