@@ -14,6 +14,27 @@ userdata = {
         'dummy_id':{'nick':'ㅇㅈㅇ','timezone':{'Asia/Seoul'}}
         }
 
+def strtotz(tzstr):
+    if tzstr[0:3].lower() == 'utc':
+        offset = tzstr[3:]
+        if offset == '':
+            tzstr = 'Etc/GMT'
+        else:
+            try:
+                offsetInt = -int(offset)
+            except ValueError:
+                return 'Wrong offset for UTC. Use UTC+/-<offset> (where offset is integer)'
+                
+            offset = '{0:+d}'.format(offsetInt)
+            tzstr = 'Etc/GMT' + offset
+
+    try:
+        timezone = pytz.timezone(tzstr)
+    except pytz.exceptions.UnknownTimeZoneError:
+        return 'Unknown timezone. Find one from below link: !wiki List of tz database time zones'
+        
+    return timezone
+
 def userdata_add(self, cmdline, meta):
     meta['reply']('Note: Adding a user to NowBot is still not fully implemented yet')
     if len(cmdline) != 3:
@@ -54,24 +75,10 @@ def timezone_handler(self, cmdline, meta):
                 'find TZ value and put it into <timezone>\n\n' +\
                 'For your convenience, UTC+/-<offset> type queries are also provided')
         return
-
-    if tzstr[0:3].lower() == 'utc':
-        offset = tzstr[3:]
-        if offset == '':
-            tzstr = 'Etc/GMT'
-        else:
-            try:
-                offsetInt = -int(offset)
-            except ValueError:
-                meta['reply']('Wrong offset for UTC. Use UTC+/-<offset> (where offset is integer)')
-                return
-            offset = '{0:+d}'.format(offsetInt)
-            tzstr = 'Etc/GMT' + offset
-
-    try:
-        timezone = pytz.timezone(tzstr)
-    except pytz.exceptions.UnknownTimeZoneError:
-        meta['reply']('Unknown timezone. For more info, type "!now --timezone help"')
+    
+    timezone = strtotz(tzstr)
+    if type(timezone) is str:
+        meta['reply']('Error while processing tzdata: \n' + timezone)
         return
 
     meta['reply'](datetime.datetime.now().astimezone(timezone).strftime(timefmt))
